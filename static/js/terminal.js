@@ -13,7 +13,6 @@ $.fn.teletype = function(opts){
 };
 
 function allType(text, timeafter, first){
-    console.log(text, timeafter);
     setTimeout(function(){
 
             var span = $('#terminal .messages').append('<span>'+first+' </span>').children().last();
@@ -27,9 +26,11 @@ function allType(text, timeafter, first){
 
 function messageCheckCount() {
     var count = $('#terminal .messages span').size();
-    if(count>30){
-        for (var i = 0; i < count-30; i++) {
+    console.log('Check count');
+    if(count>=29){
+        for (var i = 0; i < count-29; i++) {
            $('#terminal .messages span').first().remove();
+           console.log('Delete last');
         };
     }
 };

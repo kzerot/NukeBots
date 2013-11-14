@@ -24,7 +24,7 @@ class World(object):
             self.sleep_time = time.time()
 
     def process_robot(self, json):
-        print('process robot', json['name'])
+        #print('process robot', json['name'])
         robot = Robot(json)
         robot.process_action()
         self.db.robots.update({'name': robot.name, 'owner': robot.owner},

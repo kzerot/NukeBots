@@ -105,6 +105,11 @@ class App():
                     "owner": user['login'],
                     "actions": [],
                     "instructions": {'wander': '''go random
+go random
+go random
+go random
+go 2 2
+go 4 4
 jmp 0'''},
                     "messages": [],
                     "instructions_stage": 0,

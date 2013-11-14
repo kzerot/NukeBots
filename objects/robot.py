@@ -72,7 +72,8 @@ class Robot(object):
                 'REPORT: NEW COORDINATES {}/{}:'.format(self.x, self.y)
             )
             if self.x == x and self.y == y:
-                if self.actions[0] == 'run':
+                self.add_message('REPORT: AT POINT')
+                if self.actions[0]['name'] == 'run':
                     return 'OK'
                 else:
                     self.actions = self.actions[1:]
@@ -89,7 +90,8 @@ class Robot(object):
 
     def to_update(self):
         return {'actions': self.actions, 'instructions': self.instr,
-                'x': self.x, 'y': self.y, 'messages': self.messages}
+                'x': self.x, 'y': self.y, 'messages': self.messages,
+                'instructions_stage': self.instr_stage}
 
     def process_action(self):
         if not self.actions or len(self.actions) == 0:
@@ -118,6 +120,7 @@ class Robot(object):
 
     def run(self, command):
         instr = self.instr[command].split('\n')
+        print(instr)
         if self.instr_stage >= len(instr):
             self.instr_stage = 0
             self.actions = self.actions[1:]
@@ -133,7 +136,7 @@ class Robot(object):
             act = instr[self.instr_stage].split(' ')
             com = act[0]
             args = act[1:]
-            print('jump to {} and run'.format(self.instr_stage))
+            print('jump to {}'.format(self.instr_stage))
         elif com == 'jmp':
             self.instr_stage = 0
             self.actions = self.actions[1:]
