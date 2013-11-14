@@ -130,7 +130,10 @@ class Robot(object):
 
         if com == 'jmp' and args[0] and str(args[0]).isdigit():
             self.instr_stage = int(args[0])
-            print('jump to {}'.format(self.instr_stage))
+            act = instr[self.instr_stage].split(' ')
+            com = act[0]
+            args = act[1:]
+            print('jump to {} and run'.format(self.instr_stage))
         elif com == 'jmp':
             self.instr_stage = 0
             self.actions = self.actions[1:]
