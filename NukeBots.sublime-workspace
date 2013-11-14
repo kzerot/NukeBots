@@ -224,77 +224,10 @@
 	"buffers":
 	[
 		{
-			"file": "main.py",
-			"settings":
-			{
-				"buffer_size": 4684,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "world.py",
-			"settings":
-			{
-				"buffer_size": 1021,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "from random import choice\n\nrobotTemplate = '''Robot: {0}'''\n\n\nclass Robot(object):\n    def __init__(self, data):\n        self.data = data\n        self.name = data['name']\n        self.inventory = data['inventory']\n        self.x = data['x']\n        self.y = data['y']\n        self.owner = data['owner']\n        self.actions = data['actions']\n        self.instr = data['instructions']\n        self.messages = data['messages']\n        self.instr_stage = data[\"instructions_stage\"]\n        self.available_commands = [\n            'go',\n            'attack',\n            'harvest'\n        ]\n\n    def _go_north(self):\n        self.x += 1\n        self.add_message('REPORT: GO NORTH COMPLITE')\n        return 'OK'\n\n    def _go_south(self):\n        self.x -= 1\n        self.add_message('REPORT: GO SOUTH COMPLITE')\n        return 'OK'\n\n    def _go_west(self):\n        self.y -= 1\n        self.add_message('REPORT: GO WEST COMPLITE')\n        return 'OK'\n\n    def _go_east(self):\n        self.y += 1\n        self.add_message('REPORT: GO EAST COMPLITE')\n        return 'OK'\n\n    def _go_random(self):\n        f = choice([\n            self._go_east, self._go_north, self._go_south, self._go_west\n        ])\n        return f()\n\n    def _go(self, args):\n        if len(args) == 1:\n            try:\n                c = getattr(Robot, '_go_{}'.format(args[0]))\n                return c(self)\n            except:\n                self.add_message('Invalide attribute ' + args[0])\n                return 'BREAK'\n        elif len(args) == 2:\n            return self.go_xy(args[0], args[1])\n\n    def go_xy(self, x, y):\n        try:\n            x = int(x)\n            y = int(y)\n            if abs(self.x - x) > abs(self.y - y):\n                #Go on X axis\n                self.x += - int(abs(self.x - x) // (self.x - x))\n            else:\n                #Go on Y axis\n                self.y += - abs(self.y - y) // (self.y - y)\n            self.add_message(\n                'REPORT: NEW COORDINATES {}/{}:'.format(self.x, self.y)\n            )\n            if self.x == x and self.y == y:\n                if self.actions[0] == 'run':\n                    return 'OK'\n                else:\n                    self.actions = self.actions[1:]\n            return 'CONT'\n        except:\n            self.add_message('Can\\'t go to coordinates {}/{}'.format(x, y))\n            return 'BREAK'\n\n    def __str__(self):\n        return robotTemplate.format(self.name)\n\n    def to_terminal(self):\n        return [str(self), 'Coordinates: {}/{}'.format(self.x, self.y)]\n\n    def to_update(self):\n        return {'actions': self.actions, 'instructions': self.instr,\n                'x': self.x, 'y': self.y, 'messages': self.messages}\n\n    def process_action(self):\n        if not self.actions or len(self.actions) == 0:\n            return\n        action = self.actions[0]\n        name = action['name']\n        args = action['args']\n        if name == 'go' and len(args) == 2:\n            self.go(args[0], args[1])\n        elif name == 'run':\n            self.run(args[0])\n\n    def add_command(self, com, args):\n        if com not in self.available_commands:\n            return 'Not available command'\n        #verify command\n        if com == 'go':\n            if(not args or len(args) != 2):\n                return 'Not available arguments'\n            elif(len(args) == 2 and\n                (not str(args[0]).isdigit() or\n                    not str(args[1]).isdigit())):\n                return 'Arguments not numbers'\n        self.actions.append({'name': com, 'args': args})\n        return 'OK'\n\n    def run(self, command):\n        instr = self.instr[command].split('\\n')\n        if self.instr_stage >= len(instr):\n            self.instr_stage = 0\n            self.actions = self.actions[1:]\n        act = instr[self.instr_stage].split(' ')\n        com = act[0]\n        args = act[1:]\n        print('Process {}, stage {}, command {}'.format(\n            command, self.instr_stage, com\n        ))\n\n        if com == 'jmp' and args[0] and str(args[0]).isdigit():\n            self.instr_stage = int(args[0])\n            print('jump to {}')\n        elif com == 'jmp':\n            self.instr_stage = 0\n            self.actions = self.actions[1:]\n            self.add_message(\n                'Incorrect usage jmp on stage {}'.format(self.instr_stage)\n            )\n            return\n\n        result = 'OK'\n        try:\n            c = getattr(Robot, '_{}'.format(com))\n            result = c(self, args)\n        except:\n            self.add_message(\n                'Invalide instruction at line {}'.format(self.instr_stage)\n            )\n        if result == 'OK':\n            self.instr_stage += 1\n        elif result == 'BREAK':\n            self.instr_stage = 0\n            self.actions = self.actions[1:]\n        elif result == 'CONT':\n            pass\n        else:\n            self.instr_stage = 0\n            self.actions = self.actions[1:]\n\n    def add_message(self, message):\n        self.messages.append(message)\n        if(len(self.messages) > 3):\n            self.messages = self.messages[-3:]\n",
 			"file": "objects/robot.py",
-			"file_size": 5204,
-			"file_write_time": 130289068463115230,
 			"settings":
 			{
-				"buffer_size": 5073,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "helpers/mapgenerator.py",
-			"settings":
-			{
-				"buffer_size": 2219,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "commandprocessor.py",
-			"settings":
-			{
-				"buffer_size": 4909,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "NukeBots.sublime-project",
-			"settings":
-			{
-				"buffer_size": 354,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-			"settings":
-			{
-				"buffer_size": 178,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "static/js/terminal.js",
-			"settings":
-			{
-				"buffer_size": 2783,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "static/css/main.css",
-			"settings":
-			{
-				"buffer_size": 2305,
+				"buffer_size": 5098,
 				"line_ending": "Windows"
 			}
 		}
@@ -358,27 +291,36 @@
 	},
 	"file_history":
 	[
-		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Installed Packages/sublimetext.github.com.sublime-package",
+		"/C/Python33/NukeBots/objects/robot.py",
 		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/User/Git.sublime-settings",
 		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/Git/Git.sublime-settings",
-		"/C/Python33/NukeBots/objects/robot.py",
-		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
-		"/C/Python33/NukeBots/world.py",
-		"/C/Python33/NukeBots/templates/login.view.html",
-		"/C/Python33/NukeBots/static/js/terminal.js",
-		"/C/Python33/NukeBots/helpers/mapgenerator.py",
-		"/C/Python33/NukeBots/templates/index.view.html",
 		"/C/Python33/NukeBots/NukeBots.sublime-project",
-		"/C/Python33/NukeBots/templates/base.template.html",
+		"/C/Python33/NukeBots/prj.sublime-project",
+		"/C/Python33/NukeBots/static/css/main.css",
+		"/C/Python33/NukeBots/static/js/terminal.js",
 		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-		"/C/Python33/NukeBots/main.py",
-		"/C/Python33/NukeBots/helpers/__init__.py",
-		"/C/Python33/NukeBots/objects/__init__.py",
-		"/C/Python33/NukeBots/__init__.py",
 		"/C/Python33/NukeBots/commandprocessor.py",
+		"/C/Python33/NukeBots/helpers/mapgenerator.py",
+		"/C/Python33/NukeBots/world.py",
+		"/C/Python33/NukeBots/main.py",
+		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Installed Packages/sublimetext.github.com.sublime-package",
+		"/C/Python33/prj/objects/robot.py",
+		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Python33/prj/world.py",
+		"/C/Python33/prj/templates/login.view.html",
+		"/C/Python33/prj/static/js/terminal.js",
+		"/C/Python33/prj/helpers/mapgenerator.py",
+		"/C/Python33/prj/templates/index.view.html",
+		"/C/Python33/prj/prj.sublime-project",
+		"/C/Python33/prj/templates/base.template.html",
+		"/C/Python33/prj/main.py",
+		"/C/Python33/prj/helpers/__init__.py",
+		"/C/Python33/prj/objects/__init__.py",
+		"/C/Python33/prj/__init__.py",
+		"/C/Python33/prj/commandprocessor.py",
 		"/C/Python33/lib/site-packages/tornado/web.py",
-		"/C/Python33/NukeBots/static/templates/base.template.html",
-		"/C/Python33/NukeBots/css/main.css",
+		"/C/Python33/prj/static/templates/base.template.html",
+		"/C/Python33/prj/css/main.css",
 		"/C/Users/maxim/Documents/text.py",
 		"/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap"
 	],
@@ -430,168 +372,24 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "main.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4684,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3998,
-								3998
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 45.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "world.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1021,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								950,
-								950
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "objects/robot.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5073,
+						"buffer_size": 5098,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4106,
-								4106
+								4848,
+								4848
 							]
 						],
 						"settings":
@@ -599,26 +397,34 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
 								"bh_angle",
 								"bh_angle_center",
 								"bh_angle_open",
 								"bh_angle_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
 								"bh_regex",
 								"bh_regex_center",
 								"bh_regex_open",
 								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
 								"bh_square",
 								"bh_square_center",
 								"bh_square_open",
@@ -627,312 +433,17 @@
 								"bh_curly_center",
 								"bh_curly_open",
 								"bh_curly_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close"
 							],
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1575.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "helpers/mapgenerator.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2219,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1846,
-								1846
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 450.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "commandprocessor.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4909,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								742,
-								744
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "NukeBots.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 354,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								351,
-								351
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/C/Users/maxim/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 178,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								176,
-								176
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1927.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -940,156 +451,8 @@
 			]
 		},
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 7,
-					"file": "static/js/terminal.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2783,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2071,
-								2075
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close"
-							],
-							"rulers":
-							[
-							],
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 527.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "static/css/main.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2305,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1493,
-								1493
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close"
-							],
-							"syntax": "Packages/CSS/CSS.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 977.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1135,6 +498,10 @@
 	{
 		"height": 204.0
 	},
+	"output.git":
+	{
+		"height": 100.0
+	},
 	"project": "NukeBots.sublime-project",
 	"replace":
 	{
@@ -1169,10 +536,10 @@
 	{
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 122.0,
+	"side_bar_width": 208.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
