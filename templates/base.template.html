@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %} {{ title }} {% end %}</title>
+    <link rel=stylesheet href="{{static_url('css/main.css')}}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+    {% block script %} {% end %}
+  </head>
+  <body>
+    {% block body %}
+      Nothing
+    {% end %}
+  </body>
+</html>

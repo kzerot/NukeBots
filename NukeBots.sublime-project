@@ -1,0 +1,26 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"python",
+				"-u",
+				"main.py"
+			],
+			"name": "RunWorld",
+			"selector": "source.python"
+		}
+	],
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "C:\\Python33\\NukeBots"
+		}
+	],
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+    "fallback_encoding": "UTF-8",
+    "default_encoding": "UTF-8",
+}

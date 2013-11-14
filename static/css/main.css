@@ -1,0 +1,128 @@
+html{
+    height: 100%;
+}
+
+body{
+    background-color: #0C0C0A;
+    color: #0FEC14;
+    border-color: #0FEC14;
+    height: 99%;
+
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.content{
+    width: 100%;
+    overflow: none;
+    height: 100%;
+}
+
+div.loginform{
+    width: 200px;
+    position: static;
+    margin: 200px auto;
+}
+input{
+    width: 100%;
+    color: #0FEC14;
+}
+
+input[type=text], input[type=password]{
+   width: 192px;
+   padding: 2px;
+   border: 2px solid; 
+   border-color: #0FEC14;
+   background-color: #1B1C17;
+
+   border-radius: 3px;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   -khtml-border-radius: 3px;
+   outline: none;
+   color: #cccccc;
+   font-family: "Lucida Console", Monaco, monospace;
+   font-size: 16px;
+}
+
+input[type=submit]{
+   padding: 2px;
+   border: 2px solid; 
+   border-color: #249F00;
+   border-radius: 3px;
+   background-color: #1B1C17;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   -khtml-border-radius: 3px;
+   outline: none;
+
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  border-color: #2BD50D;
+}
+
+div.terminal{
+    border: 4px solid;
+    width: 800px;
+    height: 600px;
+    margin: auto;
+    border-radius: 10px 10px 0 0;
+   -webkit-border-radius: 10px 10px 0 0;
+   -moz-border-radius: 10px 10px 0 0;
+   -khtml-border-radius: 10px 10px 0 0;
+   padding: 0;
+   overflow: hidden;
+}
+
+div.terminal span{
+    display: block;
+    padding: 0;
+    padding-top: 2px;
+    padding-left: 5px;
+    height: 18px;
+}
+
+div.terminal input[type=text]{
+    border: none;
+    background-color: transparent;
+    height: 100%;
+    width: 750px;
+    padding: 2px 0px;
+    color: #249F00;
+}
+div.terminal span{
+    min-width: 45px;
+}
+
+div.inputterminal span{
+    display: inline;
+}
+
+div.terminalbuttons{
+    border: 4px solid;
+    border-top: none;
+    width: 800px;
+    height: 50px;
+    margin: auto;
+   padding: 0;
+    border-radius: 0 0 10px 10px;
+   -webkit-border-radius: 0 0 10px 10px;
+   -moz-border-radius: 0 0 10px 10px;
+   -khtml-border-radius: 0 0 10px 10px;   
+}
+
+.terminalbuttons div.button{
+    height: 100%;
+    border: none;
+    border-right:  4px solid;
+    width: 50px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    cursor: pointer;
+}
+div.terminalbuttons div.button:hover{
+    background-color: #245E27;
+}
+
+
