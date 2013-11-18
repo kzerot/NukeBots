@@ -3,7 +3,14 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "C:\\Python33\\NukeBots"
+			"path": "/Users/mynyashko/Code/NukeBots"
 		}
-	]
+	],
+    "build_systems":
+    [
+        {
+            "name": "Python3",
+            "cmd": ["/usr/local/bin/python3", "-u", "$file"]
+        }
+    ]
 }

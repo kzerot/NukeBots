@@ -14,8 +14,13 @@ ws = '[NL]'
 class App():
     class BaseHandler(tornado.web.RequestHandler):
         def get_current_user(self):
-            login = self.get_secure_cookie("login", None).decode('utf-8')
-            password = self.get_secure_cookie("password", None).decode('utf-8')
+            if(self.get_secure_cookie("login", None) and
+               self.get_secure_cookie("password", None)):
+                login = self.get_secure_cookie("login", None).decode('utf-8')
+                password = self.get_secure_cookie("password",
+                                                  None).decode('utf-8')
+            else:
+                return None
             if login and password \
                 and App.db().users.find({
                     'login': login,
@@ -38,6 +43,7 @@ class App():
             password = self.get_argument("password")
             if App.db().users.find({"login": login}).count() == 0:
                 App.db().users.insert({'login': login, 'password': password})
+                App.db().robots.insert(generate_robot(login))
                 self.set_secure_cookie("login", login)
                 self.set_secure_cookie("password", password)
                 self.redirect("/")
@@ -97,23 +103,7 @@ class App():
         self.db.robots.remove()
         for user in self.db.users.find():
             if not self.db.robots.find_one({'owner': user['login']}):
-                self.db.robots.insert({
-                    "name": generate_name(),
-                    "inventory": [],
-                    "x": 0,
-                    "y": 0,
-                    "owner": user['login'],
-                    "actions": [],
-                    "instructions": {'wander': '''go random
-go random
-go random
-go random
-go 2 2
-go 4 4
-jmp 0'''},
-                    "messages": [],
-                    "instructions_stage": 0,
-                })
+                self.db.robots.insert(generate_robot(user['login']))
         self.cp = CommandProcessor(db=self.db)
 
     app = None
@@ -131,6 +121,25 @@ jmp 0'''},
         if App.app is None:
             App.app = App()
         return App.app
+
+
+def generate_robot(loginName):
+    return {"name": generate_name(),
+            "inventory": [],
+            "x": 0,
+            "y": 0,
+            "owner": loginName,
+            "actions": [],
+            "instructions": {'wander': '''go random
+go random
+go random
+go random
+go 2 2
+go 4 4
+jmp 0'''},
+            "messages": [],
+            "instructions_stage": 0,
+            }
 
 if __name__ == "__main__":
     app = App()
